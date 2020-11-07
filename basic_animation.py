@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Nov  7 16:53:43 2020
-
-@author: marty
+Run "python basic_animation.py" in terminal to see the animation
 """
 
 import numpy as np
