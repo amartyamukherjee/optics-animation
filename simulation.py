@@ -1,9 +1,16 @@
 import numpy
 
 class Field:
+    def get_electric_field(self,pos):
+        pass
+
+    def get_magnetic_field(self,pos):
+        pass
+
+class RectField(Field):
     def __init__(self,pos,dim,val,mag):
-        self.corner_pos = pos
-        self.dimension = dim
+        self.position = pos
+        self.dimensions = dim
         self.value = val
         self.magnetic = mag
 
@@ -14,15 +21,25 @@ class Field:
                 return False
         return True
 
+    def get_electric_field(self,pos):
+        if inside(self,pos) and not magnetic:
+            return value
+        else:
+            return [0 for n in value]
+
+    def get_magnetic_field(self,pos):
+        if inside(self,pos) and magnetic:
+            return value
+        else:
+            return [0 for n in value]
+
 def force(charge,pos,vel,fields):
-    force = [0 for x in pos]
+    elec = [0 for x in pos]
+    mag = [0 for x in pos]
     for field in fields:
-        if field.inside(pos):
-            if field.magnetic:
-                force += charge * numpy.cross(vel, field.value)
-            else:
-                force += charge * field.value
-    return force
+        elec += field.get_electric_field
+        mag += field.get_magnetic_field
+    return charge * (elec + numpy.cross_product(vel,mag))
 
 class Charge:
     def __init__(self,pos,vel,cha):
