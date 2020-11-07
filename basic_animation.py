@@ -8,38 +8,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-TWOPI = 2*np.pi
+num_electrons = 2
 
 fig, ax = plt.subplots()
 
-t = np.arange(0.0, TWOPI, 0.001)
-
 ax = plt.axis([-1,1,-1,1])
 
-pos = np.array([0.5,0.5])
-
-velocity = np.random.normal(size=(2))
+velocity = np.random.normal(size=(2,num_electrons))
 
 h = 0.01
 
 animation_frames = np.arange(0.0, 100, 0.1)
 
-poses = np.zeros((len(animation_frames),2))
-
-poses[0,:] = pos
+poses = np.zeros((len(animation_frames),2,num_electrons))
 
 for i in range(len(animation_frames)-1):
-    if poses[i,0] > 1 or poses[i,0] < -1:
-        velocity[0] = -velocity[0]
-    if poses[i,1] > 1 or poses[i,1] < -1:
-        velocity[1] = -velocity[1]
-    poses[i+1,:] = h*velocity + poses[i,:]
+    velocity = velocity * (-2*(np.logical_or(poses[i,:,:] > 1, poses[i,:,:] < -1)-0.5))
+    poses[i+1,:,:] = h*velocity + poses[i,:,:]
     
-redDot, = plt.plot([pos[0]], [pos[1]], 'ro')
+redDot, = plt.plot(poses[0,0,:], poses[0,1,:], 'ro')
 
 def run(pos):
     def animate(i):
-        redDot.set_data([pos[i,0]], [pos[i,1]])
+        redDot.set_data(pos[i,0,:], pos[i,1,:])
         return redDot,
     return animate
 
