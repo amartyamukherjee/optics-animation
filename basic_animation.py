@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-num_electrons = 2
+num_electrons = 10
 
 fig, ax = plt.subplots()
 
@@ -26,7 +26,7 @@ for i in range(len(animation_frames)-1):
     velocity = velocity * (-2*(np.logical_or(poses[i,:,:] > 1, poses[i,:,:] < -1)-0.5))
     poses[i+1,:,:] = h*velocity + poses[i,:,:]
     
-redDot, = plt.plot(poses[0,0,:], poses[0,1,:], 'ro')
+redDot, = plt.plot(poses[0,0,:], poses[0,1,:], 'go')
 
 def run(pos):
     def animate(i):
