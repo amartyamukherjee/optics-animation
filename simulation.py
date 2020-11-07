@@ -14,9 +14,7 @@ class Field:
                 return False
         return True
 
-fields = []
-
-def force(charge,pos,vel):
+def force(charge,pos,vel,fields):
     force = [0 for x in pos]
     for field in fields:
         if field.inside(pos):
@@ -32,9 +30,7 @@ class Charge:
         self.velocity = vel
         self.charge = cha
 
-charges = []
-
-def time_step(dt):
+def time_step(charges,dt):
     for charge in charges:
         charge.position += charge.velocity * dt
         charge.velocity = force(charge.charge, charge.position, charge.velocity) * dt
