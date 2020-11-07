@@ -1,5 +1,8 @@
 import numpy
 
+permittivity = 8.9e-12
+permeability = 1.3e-6
+
 class Field:
     def get_electric_field(self,pos):
         pass
@@ -32,6 +35,28 @@ class RectField(Field):
             return value
         else:
             return [0 for n in value]
+
+class PointCharge(Field):
+    def __init__(self,pos,cha):
+        self.position = pos
+        self.charge = cha
+
+    def get_electric_field(self,pos):
+        return charge / (4 * numpy.pi * permittivity) * (pos - self.position) / numpy.pow(numpy.linalg.norm(pos - self.position), 3)
+
+    def get_magnetic_field(self,pos):
+        return [0 for x in pos]
+
+class WireZ(Field):
+    def __init__(self,pos,cur):
+        self.position = pos
+        self.current = cur
+
+    def get_electric_field(self, pos):
+        return [0 for x in pos]
+
+    def get_magnetic_field(self,pos):
+        return numpy.cross_product([0,0,self.current],pos - self.position) * permeability / (2 * numpy.pi * numpy.linalg.norm(pos - self.position,2))
 
 def force(charge,pos,vel,fields):
     elec = [0 for x in pos]
