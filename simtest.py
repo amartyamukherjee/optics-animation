@@ -19,11 +19,15 @@ ax = plt.axis([-1,1,-1,1])
 c = [Charge([0,0],v,0.005,1) for v in np.random.normal(0,0.5,size=(num_electrons,2))]
 
 #define fields here
-f = [InfiniteWire([0.5,-1],[1,0],10000000000)]
+field_position = [-0.75,0.25]
+wire_direction = [1,0]
+f = [InfiniteWire(field_position,wire_direction,10000000000)]
 
 h = 0.01
 
-animation_frames = np.arange(0.0, 10, h)
+time_limit = 3
+
+animation_frames = np.arange(0.0, time_limit, h)
 
 
 poses = np.zeros((len(animation_frames),2,num_electrons))
@@ -34,9 +38,7 @@ for i in range(len(animation_frames)-1):
 		poses[i+1,0,j] = c[j].position[0]
 		poses[i+1,1,j] = c[j].position[1]
 
-    #velocity = velocity * (-2*(np.logical_or(poses[i,:,:] > 1, poses[i,:,:] < -1)-0.5))
-    #poses[i+1,:,:] = h*velocity + poses[i,:,:]
-
+plt.plot([field_position[0]-2*wire_direction[0],field_position[0]+2*wire_direction[0]], [field_position[1]-2*wire_direction[1],field_position[1]+2*wire_direction[1]], "r-")
 redDot, = plt.plot(poses[0,0,:], poses[0,1,:], 'go')
 
 def run(pos):
