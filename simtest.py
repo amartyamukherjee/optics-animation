@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Run "python basic_animation.py" in terminal to see the animation
+Run "python simtest.py" in terminal to see the animation
 """
 
 import numpy as np
@@ -16,14 +16,15 @@ fig, ax = plt.subplots()
 ax = plt.axis([-1,1,-1,1])
 
 #generate charges here
-c = [Charge([0,0],v,0.005,1) for v in np.random.normal(size=(num_electrons,2))]
+c = [Charge([0,0],v,0.005,1) for v in np.random.normal(0,0.5,size=(num_electrons,2))]
 
 #define fields here
 f = [InfiniteWire([0.5,-1],[1,0],10000000000)]
 
 h = 0.01
 
-animation_frames = np.arange(0.0, 100, h)
+animation_frames = np.arange(0.0, 10, h)
+
 
 poses = np.zeros((len(animation_frames),2,num_electrons))
 
@@ -35,7 +36,7 @@ for i in range(len(animation_frames)-1):
 
     #velocity = velocity * (-2*(np.logical_or(poses[i,:,:] > 1, poses[i,:,:] < -1)-0.5))
     #poses[i+1,:,:] = h*velocity + poses[i,:,:]
-    
+
 redDot, = plt.plot(poses[0,0,:], poses[0,1,:], 'go')
 
 def run(pos):
