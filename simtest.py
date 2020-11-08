@@ -16,10 +16,10 @@ fig, ax = plt.subplots()
 ax = plt.axis([-1,1,-1,1])
 
 #generate charges here
-c = [Charge([0,0],v,0.005,1) for v in np.random.normal(0,0.5,size=(num_electrons,2))]
+c = [Charge([0,0],v,0.005,1) for v in np.random.normal(0,1,size=(num_electrons,2))]
 
 #define fields here
-field_position = [-0.75,0.25]
+field_position = [-0.75,0.5]
 wire_direction = [1,0]
 f = [InfiniteWire(field_position,wire_direction,10000000000)]
 
@@ -51,4 +51,7 @@ def run(pos):
 myAnimation = animation.FuncAnimation(fig, run(poses), frames=list(range(len(animation_frames))), \
                                       interval=10, blit=True, repeat=True)
 
+    
 plt.show()
+
+#myAnimation.save("animation.gif", writer='imagemagick')
