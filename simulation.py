@@ -67,12 +67,20 @@ def force(charge,pos,vel,fields):
     return charge * (elec + numpy.cross_product(vel,mag))
 
 class Charge:
-    def __init__(self,pos,vel,cha):
+    def __init__(self,pos,vel,cha,mas):
         self.position = pos
         self.velocity = vel
         self.charge = cha
+        self.mass = mas
 
 def time_step(charges,dt):
     for charge in charges:
+        #We use a 4th order runge-kutta method to calculate the change in velocity
+        #we can do this because our force function gives us a definite function for acceleration
+        k1 = force(charge.charge, charge.position, charge.velocity) / charge.mass
+        k2 = force(charge.charge, charge.position + k1 / 2, charge.velocity) / charge.mass
+        k3 = force(charge.charge, charge.position + k2 / 2, charge.velocity) / charge.mass
+        k4 = force(charge.charge, charge.position + k3 / 2, charge.velocity) / charge.mass
+        charge.velocity += 1/6 * dt * (k1 + 2 * k2 + 2 * k3 + k4)
+        #Since we're determining velocity numerically we can't use the same method here so we settle for the less accurate Euler approximation
         charge.position += charge.velocity * dt
-        charge.velocity = force(charge.charge, charge.position, charge.velocity) * dt
