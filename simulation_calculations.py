@@ -1,3 +1,6 @@
+#Magnetic fields are 3d since we need to keep track of the z axis
+#Electric fields are 2d since we don't need to keep track of it
+
 import numpy
 
 permittivity = 8.9e-12
