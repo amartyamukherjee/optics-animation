@@ -42,7 +42,7 @@ class PointCharge(Field):
         self.charge = cha
 
     def get_electric_field(self,pos):
-        return charge / (4 * numpy.pi * permittivity) * (pos - self.position) / numpy.pow(numpy.linalg.norm(pos - self.position), 3)
+        return charge / (4 * numpy.pi * permittivity) * (pos - self.position) / n(numpy.linalg.norm(pos - self.position)**3)
 
     def get_magnetic_field(self,pos):
         return [0 for x in pos]
@@ -57,6 +57,18 @@ class WireZ(Field):
 
     def get_magnetic_field(self,pos):
         return numpy.cross_product([0,0,self.current],pos - self.position) * permeability / (2 * numpy.pi * numpy.linalg.norm(pos - self.position,2))
+
+class InfiniteWire(Field):
+    def __init__(self,pos,dire,cur):
+        self.position = pos
+        self.direction = dire
+        self.current = cur
+
+    def get_electric_field(self,pos):
+        return [0 for x in pos]
+
+    def get_magnetic_field(self,pos):
+        return current * permeability * numpy.cross_product(self.direction,pos - self.position) / (2 * numpy.pi * numpy.linalg.norm(numpy.cross_product(self.direction,pos - self.position),2))
 
 def force(charge,pos,vel,fields):
     elec = [0 for x in pos]
