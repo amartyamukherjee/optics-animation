@@ -1,5 +1,6 @@
 #Magnetic fields are 3d since we need to keep track of the z axis
 #Electric fields are 2d since we don't need to keep track of it
+#we can represent capacitors and inductors with RectFields
 
 import numpy
 
@@ -23,9 +24,7 @@ class RectField(Field):
         self.magnetic = mag
 
     def inside(self,pos):
-        if pos[0] - self.position[0] < 0 or pos[0] - self.position[0] < self.dimensions[0] or pos[1] - self.position[1] < 0 or pos[1] - self.position[1] < self.dimensions[1]:
-            return False
-        return True
+        return pos[0] - self.position[0] > 0 and pos[0] - self.position[0] < self.dimensions[0] and pos[1] - self.position[1] > 0 and pos[1] - self.position[1] < self.dimensions[1]
 
     def get_electric_field(self,pos):
         if self.inside(pos) and not self.magnetic:
@@ -45,21 +44,23 @@ class PointCharge(Field):
         self.charge = cha
 
     def get_electric_field(self,pos):
-        return self.charge / (4 * numpy.pi * permittivity) * numpy.subtract(pos, self.position) / numpy.linalg.norm(numpy.subtract(pos, self.position))**3
+        return (self.charge / (4 * numpy.pi * permittivity * (numpy.linalg.norm(numpy.subtract(pos, self.position))**3))) * numpy.subtract(pos, self.position) 
 
     def get_magnetic_field(self,pos):
         return [0, 0, 0]
 
-class WireZ(Field):
-    def __init__(self,pos,cur):
-        self.position = pos
-        self.current = cur
+#It occured to me that a wire perindicular to the plane doesn't do anything because it will only push things on the z axis
 
-    def get_electric_field(self, pos):
-        return [0, 0]
-
-    def get_magnetic_field(self,pos):
-        return numpy.cross([0,0,self.current],numpy.subtract(pos, self.position)) * permeability / (2 * numpy.pi * numpy.linalg.norm(numpy.subtract(pos, self.position),2))
+#class WireZ(Field):
+#    def __init__(self,pos,cur):
+#        self.position = pos
+#        self.current = cur
+#
+#    def get_electric_field(self, pos):
+#        return [0, 0]
+#
+#    def get_magnetic_field(self,pos):
+#        return numpy.cross([0,0,self.current],numpy.subtract(pos, self.position)) * permeability / (2 * numpy.pi * numpy.linalg.norm(numpy.subtract(pos, self.position),2))
 
 class InfiniteWire(Field):
     def __init__(self,pos,dire,cur):
@@ -93,9 +94,9 @@ def time_step(charges,fields,dt):
         #We use a 4th order runge-kutta method to calculate the change in velocity
         #we can do this because our force function gives us a definite function for acceleration
         k1 = force(charge.charge, charge.position, charge.velocity, fields) / charge.mass
-        k2 = force(charge.charge, charge.position + k1 / 2, charge.velocity, fields) / charge.mass
-        k3 = force(charge.charge, charge.position + k2 / 2, charge.velocity, fields) / charge.mass
-        k4 = force(charge.charge, charge.position + k3 / 2, charge.velocity, fields) / charge.mass
+        k2 = force(charge.charge, charge.position + dt * k1 / 2, charge.velocity, fields) / charge.mass
+        k3 = force(charge.charge, charge.position + dt * k2 / 2, charge.velocity, fields) / charge.mass
+        k4 = force(charge.charge, charge.position + dt * k3, charge.velocity, fields) / charge.mass
         charge.velocity += 1/6 * dt * (k1 + 2 * k2 + 2 * k3 + k4)
         #Since we're determining velocity numerically we can't use the same method here so we settle for the less accurate Euler approximation
         charge.position += charge.velocity * dt
